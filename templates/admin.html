@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Admin Panel</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial;
+background:#0f172a;
+margin:0;
+color:white;
+}
+
+/* HEADER */
+
+.header{
+background:#020617;
+padding:18px 40px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid #1e293b;
+}
+
+.logo{
+font-size:22px;
+font-weight:bold;
+color:#38bdf8;
+}
+
+.nav a{
+margin-right:25px;
+color:#94a3b8;
+font-weight:bold;
+text-decoration:none;
+transition:0.2s;
+}
+
+.nav a:hover{
+color:#38bdf8;
+}
+
+.wallet{
+background:#16a34a;
+padding:8px 16px;
+border-radius:8px;
+font-weight:bold;
+}
+
+.logout{
+background:#ef4444;
+padding:8px 14px;
+border-radius:6px;
+color:white;
+text-decoration:none;
+}
+
+.logout:hover{
+background:#dc2626;
+}
+
+/* MAIN */
+
+.container{
+padding:40px;
+max-width:1200px;
+margin:auto;
+}
+
+.card{
+background:#1e293b;
+padding:25px;
+border-radius:12px;
+margin-bottom:30px;
+box-shadow:0 0 10px rgba(0,0,0,0.4);
+}
+
+.card h3{
+margin-top:0;
+margin-bottom:20px;
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th{
+background:#334155;
+padding:12px;
+text-align:left;
+}
+
+td{
+padding:12px;
+border-bottom:1px solid #334155;
+}
+
+tr:hover{
+background:#1e293b;
+}
+
+/* FORM */
+
+input,select{
+padding:7px;
+border-radius:6px;
+border:none;
+margin-right:5px;
+}
+
+button{
+background:#6366f1;
+color:white;
+border:none;
+padding:7px 12px;
+border-radius:6px;
+cursor:pointer;
+font-weight:bold;
+}
+
+button:hover{
+background:#4f46e5;
+}
+
+.delete-btn{
+background:#ef4444;
+}
+
+.delete-btn:hover{
+background:#dc2626;
+}
+
+.action-group{
+display:flex;
+gap:6px;
+flex-wrap:wrap;
+}
+
+</style>
+
+
+<script>
+
+/* CONFIRM ACTION */
+
+function confirmMoney(user){
+return confirm("ยืนยันเพิ่ม/ลดเงินให้ "+user+" ?");
+}
+
+function confirmRole(user){
+return confirm("ยืนยันเปลี่ยน Role ของ "+user+" ?");
+}
+
+function confirmDelete(user){
+return confirm("ลบ USER "+user+" จริงหรือไม่ ?");
+}
+
+/* ALERT RESULT */
+
+window.onload=function(){
+
+const urlParams = new URLSearchParams(window.location.search)
+
+if(urlParams.get("msg")=="money"){
+alert("เติมเงินสำเร็จ")
+}
+
+if(urlParams.get("msg")=="role"){
+alert("เปลี่ยน Role สำเร็จ")
+}
+
+if(urlParams.get("msg")=="coupon"){
+alert("สร้างโค้ดส่วนลดสำเร็จ")
+}
+
+}
+
+</script>
+
+</head>
+
+
+<body>
+
+<div class="header">
+
+<div class="logo">Admin Dashboard</div>
+
+<div class="nav">
+<a href="/admin?page=users">Users</a>
+<a href="/admin?page=orders">Orders</a>
+<a href="/admin?page=coupons">Coupons</a>
+</div>
+
+<div style="display:flex;align-items:center;gap:20px;">
+
+<div class="wallet">
+💰 {{wallet}} บาท
+</div>
+
+<a class="logout" href="/logout">Logout</a>
+
+</div>
+
+</div>
+
+
+
+<div class="container">
+
+<!-- USERS -->
+
+{% if page == "users" %}
+
+<div class="card">
+
+<h3>User Management</h3>
+
+<table>
+
+<tr>
+<th>User</th>
+<th>Role</th>
+<th>Wallet</th>
+<th>Action</th>
+</tr>
+
+{% for u in users %}
+
+<tr>
+
+<td>{{u[1]}}</td>
+<td>{{u[3]}}</td>
+<td>{{u[4]}}</td>
+
+<td>
+
+<div class="action-group">
+
+<form action="/money" method="POST"
+onsubmit="return confirmMoney('{{u[1]}}')">
+
+<input type="hidden" name="user" value="{{u[1]}}">
+<input type="number" name="amount" placeholder="จำนวนเงิน">
+
+<button type="submit">ปรับเงิน</button>
+
+</form>
+
+
+<form action="/role" method="POST"
+onsubmit="return confirmRole('{{u[1]}}')">
+
+<input name="user" value="{{u[1]}}" hidden>
+
+<select name="role">
+<option value="member">member</option>
+<option value="staff">staff</option>
+<option value="admin">admin</option>
+</select>
+
+<button>เปลี่ยน</button>
+
+</form>
+
+
+<form action="/delete/{{u[1]}}" method="GET"
+onsubmit="return confirmDelete('{{u[1]}}')">
+
+<button class="delete-btn">ลบ</button>
+
+</form>
+
+</div>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endif %}
+
+
+
+<!-- ORDERS -->
+
+{% if page == "orders" %}
+
+<div class="card">
+
+<h3>Order List</h3>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Customer</th>
+<th>Rank</th>
+<th>Price</th>
+<th>Staff</th>
+<th>Status</th>
+<th>Proof</th>
+</tr>
+
+{% for o in orders %}
+
+<tr>
+
+<td>{{o[0]}}</td>
+<td>{{o[1]}}</td>
+<td>{{o[4]}} → {{o[5]}}</td>
+<td>{{o[6]}}</td>
+<td>{{o[7]}}</td>
+<td>{{o[8]}}</td>
+
+<td>
+
+{% if o|length > 9 and o[9] %}
+
+<a href="/static/proof/{{o[9]}}" target="_blank">
+
+<button style="background:#22c55e;">
+ดูรูป
+</button>
+
+</a>
+
+{% else %}
+
+-
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endif %}
+
+
+
+<!-- COUPON -->
+
+{% if page == "coupons" %}
+
+<div class="card">
+
+<h3>Generate Coupon</h3>
+
+<form action="/generate_coupon" method="POST">
+
+<select name="discount">
+
+<option value="5">5%</option>
+<option value="10">10%</option>
+<option value="15">15%</option>
+<option value="20">20%</option>
+<option value="30">30%</option>
+<option value="50">50%</option>
+
+</select>
+
+<button>Generate</button>
+
+</form>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>Coupon List</h3>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Code</th>
+<th>Discount</th>
+</tr>
+
+{% for c in coupons %}
+
+<tr>
+
+<td>{{c[0]}}</td>
+<td>{{c[1]}}</td>
+<td>{{c[2]}}%</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endif %}
+
+
+</div>
+
+</body>
+</html>

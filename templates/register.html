@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Register</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.card{
+background:white;
+padding:40px;
+border-radius:10px;
+width:320px;
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:8px 0;
+border:1px solid #ccc;
+border-radius:6px;
+}
+
+button{
+width:100%;
+padding:10px;
+background:#22c55e;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#16a34a;
+}
+
+a{
+display:block;
+text-align:center;
+margin-top:10px;
+text-decoration:none;
+}
+
+.error{
+color:red;
+text-align:center;
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Create Account</h2>
+
+<form method="POST">
+
+<input name="username" placeholder="Username" required>
+
+<input name="password" type="password" placeholder="Password" required>
+
+<input name="confirm" type="password" placeholder="Confirm Password" required>
+
+<button type="submit">Register</button>
+
+</form>
+
+<a href="/login">Back to Login</a>
+
+{% if error %}
+<p class="error">{{ error }}</p>
+{% endif %}
+
+</div>
+
+</body>
+</html>

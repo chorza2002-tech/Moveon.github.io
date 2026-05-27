@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Valorant Boost</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#0f172a;
+color:white;
+}
+
+/* TOPBAR */
+.topbar{
+background:#020617;
+padding:15px 40px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+/* menu */
+.menu a{
+margin-right:20px;
+color:white;
+text-decoration:none;
+font-weight:bold;
+}
+
+.menu a:hover{
+color:#38bdf8;
+}
+
+/* right */
+.right a{
+margin-left:15px;
+color:white;
+text-decoration:none;
+}
+
+.login-btn{
+background:#22c55e;
+padding:6px 12px;
+border-radius:6px;
+}
+
+/* content */
+.content{
+padding:40px;
+text-align:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+
+    <!-- ซ้าย -->
+    <div class="menu">
+        <a href="/">สั่งซื้อออเดอร์</a>
+        <a href="/queue">คิวงาน</a>
+        <a href="/topup">เติมเงิน</a>
+        <a href="/contact">ติดต่อ</a>
+    </div>
+
+    <!-- ขวา -->
+    <div class="right">
+
+        {% if session.get("user") %}
+            👋 {{ session["user"] }}
+            <a href="/logout">ออกจากระบบ</a>
+        {% else %}
+            <a href="/login" class="login-btn">Login</a>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

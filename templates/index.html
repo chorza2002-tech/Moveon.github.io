@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Valorant Boost</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+margin:0;
+}
+
+/* 🔥 TOPBAR */
+.topbar{
+background:#020617;
+padding:15px 40px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 2px 10px rgba(0,0,0,0.5);
+}
+
+.logo{
+font-weight:bold;
+font-size:18px;
+}
+
+.menu{
+display:flex;
+gap:25px;
+}
+
+.menu a{
+color:white;
+text-decoration:none;
+font-weight:bold;
+}
+
+.menu a:hover{
+color:#38bdf8;
+}
+
+.right{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+/* 🔥 BUTTON */
+.btn{
+padding:6px 14px;
+border-radius:6px;
+text-decoration:none;
+color:white;
+font-size:14px;
+}
+
+.login-btn{ background:#6366f1; }
+.logout-btn{ background:#ef4444; }
+
+.wallet{
+background:#16a34a;
+padding:8px 14px;
+border-radius:8px;
+font-weight:bold;
+}
+
+/* 🔥 HERO */
+.hero{
+text-align:center;
+padding:60px 20px 30px;
+}
+
+.hero h1{
+font-size:36px;
+margin-bottom:10px;
+}
+
+.hero p{
+color:#94a3b8;
+}
+
+/* 🔥 DASHBOARD */
+.stats{
+display:flex;
+justify-content:center;
+gap:20px;
+padding:20px;
+flex-wrap:wrap;
+}
+
+.stat-card{
+background:#1e293b;
+padding:20px;
+border-radius:12px;
+width:200px;
+text-align:center;
+}
+
+.stat-card h2{
+margin:10px 0;
+color:#22c55e;
+}
+
+/* CONTENT */
+.container{
+padding:30px;
+}
+
+.tabs{
+display:flex;
+gap:10px;
+margin-bottom:20px;
+}
+
+.tab{
+background:#1e293b;
+padding:10px 20px;
+cursor:pointer;
+border-radius:6px;
+}
+
+.tab.active{
+background:#6366f1;
+}
+
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+max-width:500px;
+}
+
+input,select{
+padding:8px;
+border-radius:6px;
+border:none;
+margin-top:8px;
+width:100%;
+}
+
+button{
+background:#6366f1;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#4f46e5;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:10px;
+text-align:left;
+}
+
+th{
+background:#334155;
+}
+
+tr:nth-child(even){
+background:#1e293b;
+}
+
+.price{
+font-size:20px;
+color:#22c55e;
+margin-top:10px;
+}
+
+.finalprice{
+font-size:18px;
+color:#22c55e;
+margin-top:5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- 🔥 NAVBAR -->
+<div class="topbar">
+
+<div class="logo">🔥 Valorant Boost</div>
+
+<div class="menu">
+<a href="#" onclick="checkLoginAndGo('/')">สั่งซื้อ</a>
+<a href="#" onclick="checkLoginAndGo('queue')">คิวงาน</a>
+<a href="#" onclick="checkLoginAndGo('/topup')">เติมเงิน</a>
+<a href="#" onclick="checkLoginAndGo('/contact')">ติดต่อ</a>
+</div>
+
+<div class="right">
+
+{% if session.get("user") %}
+<div class="wallet">💰 {{wallet}} บาท</div>
+<span>👤 {{session["user"]}}</span>
+<a href="/logout" class="btn logout-btn">Logout</a>
+{% else %}
+<a href="/login" class="btn login-btn">Login</a>
+{% endif %}
+
+</div>
+
+</div>
+
+<!-- 🔥 HERO -->
+<div class="hero">
+<h1>บริการ Boost Rank Valorant</h1>
+<p>รวดเร็ว ปลอดภัย โดยทีมงานมือโปร</p>
+</div>
+
+<!-- 🔥 DASHBOARD -->
+<div class="stats">
+
+<div class="stat-card">
+<p>ออเดอร์ทั้งหมด</p>
+<h2>{{ today_orders }}</h2>
+</div>
+
+<div class="stat-card">
+<p>Staff ทั้งหมด</p>
+<h2>{{ staff_online }}</h2>
+</div>
+
+<div class="stat-card">
+<p>คิวงาน</p>
+<h2>{{ staff_ready }}</h2>
+</div>
+
+</div>
+
+<div class="container">
+
+{% if session.get("user") %}
+
+<!-- 🔥 TABS (โชว์เฉพาะตอน login) -->
+<div class="tabs">
+<div id="tab-order" class="tab active" onclick="showTab('order',this)">Order</div>
+<div id="tab-queue" class="tab" onclick="showTab('queue',this)">Queue</div>
+</div>
+
+<!-- ORDER -->
+<div id="order" class="card">
+
+<h3>Order Boost</h3>
+
+<form id="orderForm">
+<input name="riot" placeholder="Riot ID" required>
+<input name="password" type="password" placeholder="Riot Password" required>
+
+<select id="rank_from" name="rank_from" onchange="calc()"></select>
+<select id="rank_to" name="rank_to" onchange="calc()"></select>
+
+<input id="coupon" name="coupon" placeholder="Coupon Code (optional)">
+
+<input type="hidden" id="price_input" name="price">
+
+<div class="price">Price : <span id="price">0</span> บาท</div>
+<div class="finalprice">Final Price : <span id="finalPrice">0</span> บาท</div>
+
+<button type="button" onclick="orderBoost()">Order Boost</button>
+</form>
+</div>
+
+<!-- QUEUE -->
+<div id="queue" class="card" style="display:none">
+<h3>Boost Queue</h3>
+
+<table>
+<tr>
+<th>ID</th>
+<th>Customer</th>
+<th>Rank</th>
+<th>Price</th>
+<th>Staff</th>
+<th>Status</th>
+</tr>
+
+{% for q in orders %}
+<tr>
+<td>{{q[0]}}</td>
+<td>{{q[1]}}</td>
+<td>{{q[4]}} → {{q[5]}}</td>
+<td>{{q[6]}}</td>
+<td>{{q[7]}}</td>
+<td>{{q[8]}}</td>
+</tr>
+{% endfor %}
+
+</table>
+</div>
+
+{% endif %}
+
+</div>
+
+<script>
+
+let wallet = {{ wallet if wallet else 0 }}
+let discount = 0
+
+/* 🔒 LOGIN CHECK */
+function checkLogin(){
+if(!{{ 'true' if session.get("user") else 'false' }}){
+alert("กรุณา Login ก่อน")
+window.location.href="/login"
+return false
+}
+return true
+}
+
+/* 🔥 TAB */
+function showTab(tab,el){
+if(!checkLogin()) return
+
+document.getElementById("order").style.display="none"
+document.getElementById("queue").style.display="none"
+
+document.getElementById(tab).style.display="block"
+
+document.getElementById("tab-order").classList.remove("active")
+document.getElementById("tab-queue").classList.remove("active")
+
+el.classList.add("active")
+}
+
+/* 🔥 MENU */
+function checkLoginAndGo(target){
+if(!checkLogin()) return
+
+if(target === 'queue'){
+showTab('queue',document.getElementById("tab-queue"))
+}else{
+window.location.href = target
+}
+}
+
+/* 🔥 ORDER */
+function orderBoost(){
+
+if(!checkLogin()) return
+
+let formData = new FormData(document.getElementById("orderForm"))
+
+fetch("/order",{
+method:"POST",
+body:formData
+})
+.then(res=>res.json())
+.then(data=>{
+
+if(data.status==="success"){
+alert("✅ สั่งซื้อสำเร็จ")
+location.reload()
+}
+else if(data.status==="invalid_coupon"){
+alert("❌ คูปองไม่ถูกต้อง")
+}
+else if(data.status==="used_coupon"){
+alert("❌ ใช้คูปองนี้ไปแล้ว")
+}
+else if(data.status==="nomoney"){
+alert("❌ เงินไม่พอ")
+}
+else{
+alert("❌ เกิดข้อผิดพลาด")
+}
+
+})
+
+}
+
+/* 🎟️ CHECK COUPON */
+document.addEventListener("DOMContentLoaded",()=>{
+
+document.getElementById("coupon").addEventListener("blur",function(){
+
+let code=this.value.trim()
+
+if(!code){
+discount=0
+calc()
+return
+}
+
+fetch("/check_coupon/"+code)
+.then(res=>res.json())
+.then(data=>{
+
+discount = data.discount
+
+if(discount>0){
+alert("✅ ใช้คูปองได้ ลด "+discount+" บาท")
+}else{
+alert("❌ คูปองใช้ไม่ได้")
+}
+
+calc()
+
+})
+
+})
+
+})
+
+/* RANK SYSTEM */
+const rankPrice={
+iron:10, bronze:25, silver:40, gold:70,
+platinum:90, diamond:150, ascendant:210,
+immortal1:350, immortal2:500, immortal3:750
+}
+
+let ranks=[
+"iron1","iron2","iron3",
+"bronze1","bronze2","bronze3",
+"silver1","silver2","silver3",
+"gold1","gold2","gold3",
+"platinum1","platinum2","platinum3",
+"diamond1","diamond2","diamond3",
+"ascendant1","ascendant2","ascendant3",
+"immortal1","immortal2","immortal3"
+]
+
+function getRankName(r){
+if(r.includes("iron")) return "iron"
+if(r.includes("bronze")) return "bronze"
+if(r.includes("silver")) return "silver"
+if(r.includes("gold")) return "gold"
+if(r.includes("platinum")) return "platinum"
+if(r.includes("diamond")) return "diamond"
+if(r.includes("ascendant")) return "ascendant"
+return r
+}
+
+/* 🔥 CALC PRICE */
+function calc(){
+
+let from=document.getElementById("rank_from").value
+let to=document.getElementById("rank_to").value
+
+if(!from || !to) return
+
+let start=ranks.indexOf(from)
+let end=ranks.indexOf(to)
+
+let price=0
+
+if(end<=start){
+updatePrice(0)
+return
+}
+
+for(let i=start;i<end;i++){
+let nextRank=ranks[i+1]
+price += rankPrice[getRankName(nextRank)]
+}
+
+let final = price - discount
+if(final < 0) final = 0
+
+document.getElementById("price").innerText=price
+document.getElementById("finalPrice").innerText=final
+document.getElementById("price_input").value=final
+}
+
+/* INIT */
+window.onload=()=>{
+
+let from=document.getElementById("rank_from")
+let to=document.getElementById("rank_to")
+
+ranks.forEach(r=>{
+from.add(new Option(r,r))
+to.add(new Option(r,r))
+})
+
+calc()
+}
+
+</script>
+
+</body>
+</html>

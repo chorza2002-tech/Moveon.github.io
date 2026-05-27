@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Staff Panel</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+margin:0;
+}
+
+.header{
+background:#1e293b;
+padding:20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.nav a{
+margin-right:20px;
+color:#38bdf8;
+text-decoration:none;
+font-weight:bold;
+}
+
+.container{
+padding:30px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+}
+
+.box{
+background:#1e293b;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.3);
+}
+
+.title{
+font-size:18px;
+margin-bottom:10px;
+}
+
+.price{
+color:#22c55e;
+font-size:18px;
+margin-top:10px;
+}
+
+button{
+margin-top:10px;
+width:100%;
+padding:10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.take{
+background:#22c55e;
+color:white;
+}
+
+.finish{
+background:#6366f1;
+color:white;
+}
+
+.upload{
+margin-top:10px;
+background:#334155;
+padding:6px;
+border-radius:6px;
+width:100%;
+color:white;
+}
+
+.logout{
+background:#ef4444;
+padding:8px 14px;
+border-radius:6px;
+color:white;
+text-decoration:none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<div>
+
+<h2>Staff Dashboard</h2>
+
+<div style="color:#22c55e;font-weight:bold;">
+Wallet : {{wallet}} บาท
+</div>
+
+</div>
+
+<div class="nav">
+<a href="/staff?page=queue">Queue Orders</a>
+<a href="/staff?page=myorders">My Orders</a>
+</div>
+
+<a class="logout" href="/logout">Logout</a>
+
+</div>
+
+<div class="container">
+
+<!-- QUEUE -->
+
+{% if page=="queue" %}
+
+<h2>Queue Orders</h2>
+
+<div class="grid">
+
+{% for q in queue %}
+
+<div class="box">
+
+<div class="title">Order #{{q[0]}}</div>
+
+Customer : {{q[1]}} <br>
+Rank : {{q[4]}} → {{q[5]}}
+
+<div class="price">
+{{q[6]}} บาท
+</div>
+
+<a href="/take_order/{{q[0]}}">
+<button class="take">รับงาน</button>
+</a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+
+
+<!-- MY ORDERS -->
+
+{% if page=="myorders" %}
+
+<h2>My Orders</h2>
+
+<div class="grid">
+
+{% for o in myorders %}
+
+<div class="box">
+
+<div class="title">Order #{{o[0]}}</div>
+
+Customer : {{o[1]}} <br>
+Riot ID : {{o[2]}} <br>
+Password : {{o[3]}} <br>
+Rank : {{o[4]}} → {{o[5]}} <br>
+
+<div class="price">
+{{o[6]}} บาท
+</div>
+
+{% if o[8] != "done" %}
+
+<form action="/finish_order/{{o[0]}}" method="POST" enctype="multipart/form-data">
+
+<input type="file" name="proof" required>
+
+<button type="submit">
+Finish Job
+</button>
+
+</form>
+
+{% else %}
+
+<b style="color:#22c55e;">Finished</b>
+
+{% endif %}
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+
+</div>
+
+<script>
+
+setInterval(function(){
+
+if(window.location.href.includes("queue")){
+location.reload();
+}
+
+},5000)
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Valorant Boost Login</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.login-box{
+background:#e5e7eb;
+padding:40px;
+border-radius:10px;
+width:320px;
+text-align:center;
+}
+
+.login-box h2{
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:8px 0;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+button{
+width:100%;
+padding:10px;
+margin-top:10px;
+background:#6366f1;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
+font-size:16px;
+}
+
+button:hover{
+background:#4f46e5;
+}
+
+a{
+color:#4f46e5;
+text-decoration:none;
+}
+
+a:hover{
+text-decoration:underline;
+}
+
+.error{
+color:red;
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="login-box">
+
+<h2>Valorant Boost</h2>
+
+<form method="POST">
+
+<input type="text" name="username" placeholder="Username" required autofocus>
+
+<input type="password" name="password" placeholder="Password" required>
+
+<button type="submit">Login</button>
+
+</form>
+
+<p>
+ยังไม่มีบัญชี? <a href="/register">สมัครได้เลยที่นี่</a>
+</p>
+
+{% if error %}
+<p class="error">{{ error }}</p>
+{% endif %}
+
+</div>
+
+<script>
+/* =========================
+   🔥 Popup สมัครสำเร็จ
+========================= */
+const urlParams = new URLSearchParams(window.location.search);
+if(urlParams.get("success") === "1"){
+    alert("สมัครสมาชิกสำเร็จ! เข้าสู่ระบบได้เลย 🎉");
+}
+</script>
+
+</body>
+</html>
